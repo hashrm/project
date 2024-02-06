@@ -1,0 +1,76 @@
+<!-- Registration.html -->
+
+<div>
+  <h2 style="color: rgb(99, 5, 208);">NGS Sample Shipment Registration</h2>
+  <form id="registrationForm">
+    <div>
+      <label>Email Address:</label>
+      <input type="email" name="email" required>
+    </div>
+    <div>
+      <label>Stakeholder Sending the Sample:</label>
+      <select name="stakeholder" required>
+        <option value="Doctor and Institution">Doctor and Institution</option>
+        <option value="FSO">FSO</option>
+        <option value="Direct Patient">Direct Patient</option>
+      </select>
+    </div>
+    <div>
+      <label>Patient Name:</label>
+      <input type="text" name="patientName" required>
+    </div>
+    <div>
+      <label>Patient Email Address:</label>
+      <input type="email" name="patientEmail" required>
+    </div>
+    <div>
+      <label>Patient Phone Number:</label>
+      <input type="tel" name="patientPhone" required>
+    </div>
+    <div>
+      <label>Sender (Doctor or FSO) Name:</label>
+      <input type="text" name="senderName" required>
+    </div>
+    <div>
+      <label>Sender (Doctor or FSO) Email Address:</label>
+      <input type="email" name="senderEmail" required>
+    </div>
+    <div>
+      <label>Sender (Doctor or FSO) Phone Number:</label>
+      <input type="tel" name="senderPhone" required>
+    </div>
+    <div>
+      <label>Address of Sender (Doctor or FSO) with PINCODE:</label>
+      <textarea name="senderAddress" required></textarea>
+    </div>
+    <div>
+      <label>Molecular Test Opted:</label>
+      <select name="testOpted" required>
+        <option value="WGS">WGS</option>
+        <option value="WES">WES</option>
+        <option value="K500+">K500+</option>
+        <option value="K75">K75</option>
+        <option value="K50">K50</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div>
+      <label>Molecular Dx Bar Code Number:</label>
+      <input type="text" name="barcodeNumber" required>
+    </div>
+    <div>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var formData = new FormData(e.target);
+    google.script.run.withSuccessHandler(function() {
+      alert('Registration Submitted');
+      e.target.reset();
+    }).submitRegistrationForm(Object.fromEntries(formData));
+  });
+</script>

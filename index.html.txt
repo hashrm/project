@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .header {
+        background-color: rgb(99, 5, 208);
+        color: white;
+        text-align: center;
+        padding: 10px 0;
+      }
+      .container {
+        padding: 20px;
+        display: none; /* Initially hidden until user logs in */
+      }
+      .view-container {
+        display: none;
+      }
+      .active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>NGS Sample Management System</h1>
+    </div>
+
+    <!-- Login View -->
+    <div id="login">
+      <?!= include('Login'); ?>
+    </div>
+
+    <!-- Navigation buttons, shown after successful login -->
+    <div class="container">
+      <button id="btnRegistration" onclick="showView('registration')">Registration</button>
+      <button id="btnTokenGeneration" onclick="showView('tokenGeneration')">Token Generation</button>
+      <button id="btnDashboard" onclick="showView('dashboard')">Dashboard</button>
+      <button id="btnCreateTokens" onclick="showView('createTokens')">Create Tokens</button>
+      <button id="btnLabReceived" onclick="showView('labReceived')">Lab Received</button>
+    </div>
+
+    <!-- Views -->
+    <div id="registration" class="view-container">
+      <?!= include('Registration'); ?>
+    </div>
+    <div id="tokenGeneration" class="view-container">
+      <?!= include('TokenGeneration'); ?>
+    </div>
+    <div id="dashboard" class="view-container">
+      <?!= include('Dashboard'); ?>
+    </div>
+    <div id="createTokens" class="view-container">
+      <?!= include('CreateTokens'); ?>
+    </div>
+    <div id="labReceived" class="view-container">
+      <?!= include('LabReceived'); ?>
+    </div>
+
+    <script>
+      function showView(viewName) {
+        var views = document.getElementsByClassName('view-container');
+        for (var i = 0; i < views.length; i++) {
+          views[i].classList.remove('active');
+        }
+        document.getElementById(viewName).classList.add('active');
+      }
+
+      function handleLoginResponse(response) {
+        if(response.valid) {
+          // Hide login and show navigation buttons
+          document.getElementById('login').style.display = 'none';
+          document.getElementsByClassName('container')[0].style.display = 'block';
+
+          // Control access to views
+          controlViewAccess(response.user);
+        } else {
+          document.getElementById('loginError').textContent = 'Invalid UserID or PassKey';
+        }
+      }
+
+      function controlViewAccess(user) {
+        // Define view access
+        const access = {
+          'Hariesh': ['btnRegistration', 'btnDashboard', 'btnCreateTokens', 'btnLabReceived'],
+          'Sender': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Doctor': ['btnRegistration', 'btnCreateTokens'],
+          'LabOpsKochi': ['btnRegistration', 'btnDashboard', 'btnLabReceived'],
+          'LabOpsMumbai': ['btnRegistration', 'btnDashboard', 'btnLabReceived'],
+          'Doctor1': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor2': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor3': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor4': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor5': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor6': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor7': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor8': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor9': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor10': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor11': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor12': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor13': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor14': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor15': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor16': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor17': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor18': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor19': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor20': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor21': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor22': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor23': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor24': ['btnRegistration', 'btnCreateTokens'],
+          'Doctor25': ['btnRegistration', 'btnCreateTokens'],
+          'Sender1': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender2': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender3': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender4': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender5': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender6': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender7': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender8': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender9': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender10': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender11': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender12': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender13': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender14': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender15': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender16': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender17': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender18': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender19': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender20': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender21': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender22': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender23': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender24': ['btnRegistration', 'btnDashboard', 'btnCreateTokens'],
+          'Sender25': ['btnRegistration', 'btnDashboard', 'btnCreateTokens']
+
+        };
+
+        // Hide all buttons first
+        document.querySelectorAll('.container button').forEach(btn => btn.style.display = 'none');
+
+        // Show buttons based on user access
+        access[user].forEach(btnId => {
+          document.getElementById(btnId).style.display = 'inline-block';
+        });
+      }
+
+      function handleLoginError(error) {
+        document.getElementById('loginError').textContent = 'An error occurred during login';
+      }
+    </script>
+  </body>
+</html>

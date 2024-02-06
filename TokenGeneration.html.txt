@@ -1,0 +1,44 @@
+<!-- TokenGeneration.html -->
+
+<div>
+  <h2>Token Generation</h2>
+  <button onclick="loadEntries()">Load Entries</button>
+  <div id="tokenGenerationList"></div>
+</div>
+
+<script>
+  function loadEntries() {
+    google.script.run.withSuccessHandler(buildTokenGenerationList).getEntriesForTokenGeneration();
+  }
+
+  function buildTokenGenerationList(entries) {
+    var container = document.getElementById('tokenGenerationList');
+    container.innerHTML = '';
+    entries.forEach(function(entry) {
+      var card = document.createElement('div');
+      card.style.border = "1px solid #ddd";
+      card.style.marginBottom = "10px";
+      card.style.padding = "10px";
+
+      entry.forEach(function(field) {
+        if (['Email Address', 'Patient Name', 'Patient Email Address', 'Patient Phone Number', 'Sender (Doctor or FSO) Name', 'Sender (Doctor or FSO) Email Address', 'Sender (Doctor or FSO) Phone Number', 'Address of Sender (Doctor or FSO) with PINCODE', 'Stakeholder Sending the Sample', 'Molecular Test Opted', 'Molecular Dx Bar Code Number'].includes(field.header)) {
+          var p = document.createElement('p');
+          p.innerHTML = `<strong>${field.header}:</strong> ${field.value}`;
+          card.appendChild(p);
+        }
+      });
+
+      var submitButton = document.createElement('button');
+      submitButton.innerText = 'Submit';
+      // Add necessary functionality to the submit button
+      card.appendChild(submitButton);
+
+      container.appendChild(card);
+    });
+  }
+
+  // Call loadEntries on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    loadEntries();
+  });
+</script>

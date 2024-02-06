@@ -1,0 +1,43 @@
+<!-- Dashboard.html -->
+
+<div>
+  <h2 style="color: rgb(99, 5, 208);">Dashboard</h2>
+  <div id="dashboardStats" style="padding: 10px;">
+    <!-- Statistics will be loaded here -->
+  </div>
+</div>
+
+<script>
+  // Load Dashboard Statistics on Page Load
+  document.addEventListener('DOMContentLoaded', function() {
+    loadDashboardStats();
+  });
+
+  // Function to Load Dashboard Statistics
+  function loadDashboardStats() {
+    google.script.run.withSuccessHandler(displayDashboardStats).getDashboardStats();
+  }
+
+  // Function to Display Dashboard Statistics
+  function displayDashboardStats(stats) {
+    var container = document.getElementById('dashboardStats');
+    container.innerHTML = `
+      <div style="margin-bottom: 20px;">
+        <h3 style="margin: 0;">Total Responses</h3>
+        <p>${stats.totalResponses}</p>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <h3 style="margin: 0;">Token to be Generated for</h3>
+        <p>${stats.tokensToBeGenerated}</p>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <h3 style="margin: 0;">Token Generated for</h3>
+        <p>${stats.tokensGenerated}</p>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <h3 style="margin: 0;">Total Samples Received by the Lab</h3>
+        <p>${stats.totalSamplesReceived}</p>
+      </div>
+    `;
+  }
+</script>

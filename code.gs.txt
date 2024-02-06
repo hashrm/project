@@ -1,0 +1,205 @@
+// Code.gs
+
+function doGet() {
+  return HtmlService.createTemplateFromFile('Index')
+    .evaluate()
+    .setTitle('NGS Sample Management')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename)
+    .getContent();
+}
+
+// Function to handle registration form submission
+function submitRegistrationForm(data) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const timestamp = new Date();
+  sheet.appendRow([
+    timestamp,
+    data.email,
+    data.patientName,
+    data.patientEmail,
+    data.patientPhone,
+    data.senderName,
+    data.senderEmail,
+    data.senderPhone,
+    data.senderAddress,
+    data.stakeholder,
+    data.testOpted,
+    data.barcodeNumber,
+    '', // Collection Token Number (initially empty)
+    '', // Courier Sent to Lab In (initially empty)
+    '', // Sample Received By Lab (initially empty)
+    '', // KIT BARCODE (initially empty)
+    ''  // Mail To Lab Receiver (initially empty)
+  ]);
+}
+
+// Function to fetch entries for the Create Tokens view
+function getEntriesForCreateTokens(searchTerm) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const data = sheet.getDataRange().getValues();
+  // Assuming the first row contains headers
+  const headers = data[0];
+
+  return data.slice(1).filter(row => {
+    return !searchTerm || row.some(cell => cell.toString().toLowerCase().includes(searchTerm.toLowerCase()));
+  }).map(row => {
+    return {
+      barcodeNumber: row[11],
+      patientName: row[2],
+      patientEmail: row[3],
+      patientPhone: row[4],
+      senderName: row[5],
+      tokenNumber: row[12]
+    };
+  });
+}
+
+// Function to update the Collection Token Number
+function updateCollectionTokenNumber(data) {
+  const barCode = data.barcodeNumber;
+  const token = data.tokenNumber;
+  Logger.log(`${barCode} ${token}`);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const rows = sheet.getDataRange().getValues();
+  const rowIndex = rows.findIndex(row => row[11] === barCode);
+
+  if (rowIndex > -1) {
+    Logger.log(rowIndex);
+    console.log('Updating row: ' + (rowIndex + 1) + ' with token number: ' + token);
+    sheet.getRange(rowIndex + 1, 13).setValue(token);
+  }
+  return;
+}
+
+
+// Function to verify login credentials and return the user ID if successful
+function verifyLogin(credentials) {
+  const validCredentials = {
+    Hariesh: 'Karkinos@123',
+    LabOpsKochi: 'Karkinos@123',
+    LabOpsMumbai: 'Karkinos@123',
+    Sender: 'Karkinos@123',
+    Doctor: 'Karkinos@123',
+    Doctor1: 'Karkinos@123',
+    Doctor2: 'Karkinos@123',
+    Doctor3: 'Karkinos@123',
+    Doctor4: 'Karkinos@123',
+    Doctor5: 'Karkinos@123',
+    Doctor6: 'Karkinos@123',
+    Doctor7: 'Karkinos@123',
+    Doctor8: 'Karkinos@123',
+    Doctor9: 'Karkinos@123',
+    Doctor10: 'Karkinos@123',
+    Doctor11: 'Karkinos@123',
+    Doctor12: 'Karkinos@123',
+    Doctor13: 'Karkinos@123',
+    Doctor14: 'Karkinos@123',
+    Doctor15: 'Karkinos@123',
+    Doctor16: 'Karkinos@123',
+    Doctor17: 'Karkinos@123',
+    Doctor18: 'Karkinos@123',
+    Doctor19: 'Karkinos@123',
+    Doctor20: 'Karkinos@123',
+    Doctor21: 'Karkinos@123',
+    Doctor22: 'Karkinos@123',
+    Doctor23: 'Karkinos@123',
+    Doctor24: 'Karkinos@123',
+    Doctor25: 'Karkinos@123',
+    Sender1: 'Karkinos@123',
+    Sender2: 'Karkinos@123',
+    Sender3: 'Karkinos@123',
+    Sender4: 'Karkinos@123',
+    Sender5: 'Karkinos@123',
+    Sender6: 'Karkinos@123',
+    Sender7: 'Karkinos@123',
+    Sender8: 'Karkinos@123',
+    Sender9: 'Karkinos@123',
+    Sender10: 'Karkinos@123',
+    Sender11: 'Karkinos@123',
+    Sender12: 'Karkinos@123',
+    Sender13: 'Karkinos@123',
+    Sender14: 'Karkinos@123',
+    Sender15: 'Karkinos@123',
+    Sender16: 'Karkinos@123',
+    Sender17: 'Karkinos@123',
+    Sender18: 'Karkinos@123',
+    Sender19: 'Karkinos@123',
+    Sender20: 'Karkinos@123',
+    Sender21: 'Karkinos@123',
+    Sender22: 'Karkinos@123',
+    Sender23: 'Karkinos@123',
+    Sender24: 'Karkinos@123',
+    Sender25: 'Karkinos@123',
+    
+  };
+
+  if(validCredentials[credentials.userID] === credentials.passKey) {
+    return { valid: true, user: credentials.userID }; // Return success and UserID
+  } 
+  return { valid: false }; // Return failure
+}
+
+
+// Function to fetch entries for the Lab Received view
+function getEntriesForLabReceived(searchTerm) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const data = sheet.getDataRange().getValues();
+
+  return data.slice(1).filter(row => {
+    return !searchTerm || row.some(cell => cell.toString().toLowerCase().includes(searchTerm.toLowerCase()));
+  }).map(row => {
+    return {
+      barcodeNumber: row[11],
+      patientName: row[2],
+      patientEmail: row[3],
+      patientPhone: row[4],
+      senderName: row[5],
+      tokenNumber: row[12],
+      courierLocation: row[13],
+      sampleReceived: row[14]
+    };
+  });
+}
+
+// Function to update the Sample Received By Lab
+function updateSampleReceived(data) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const rows = sheet.getDataRange().getValues();
+  const rowIndex = rows.findIndex(row => row[11] === data.barcodeNumber);
+
+  if (rowIndex > -1) {
+    sheet.getRange(rowIndex + 1, 15).setValue(data.sampleReceived);
+  }
+  return;
+}
+
+// Function to get Dashboard statistics
+function getDashboardStats() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const data = sheet.getDataRange().getValues();
+  const totalResponses = data.length - 1;
+  const tokensToBeGenerated = data.filter(row => !row[12]).length;
+  const tokensGenerated = totalResponses - tokensToBeGenerated;
+  const totalSamplesReceived = data.filter(row => row[14]).length;
+  return {
+    totalResponses,
+    tokensToBeGenerated,
+    tokensGenerated,
+    totalSamplesReceived
+  };
+}
+
+// Function to update Token Number and Courier Details
+function updateTokenAndCourierDetails(data) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const rowData = sheet.getDataRange().getValues();
+  const row = rowData.findIndex(r => r[11] === data.barcodeNumber);
+  if (row !== -1) {
+    sheet.getRange(row + 1, 13).setValue(data.tokenNumber);
+    sheet.getRange(row + 1, 14).setValue(data.courierLocation);
+  }
+}

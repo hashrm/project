@@ -1,0 +1,52 @@
+<!-- LabReceived.html -->
+
+<div>
+  <h2>Lab Received</h2>
+  <input type="text" id="searchFieldLabReceived" placeholder="Search by barcode, name, etc.">
+  <button onclick="searchLabReceivedEntries()">Search</button>
+  <div id="labReceivedList"></div>
+</div>
+
+<script>
+  function searchLabReceivedEntries() {
+    var searchTerm = document.getElementById('searchFieldLabReceived').value;
+    google.script.run.withSuccessHandler(buildLabReceivedList).getEntriesForLabReceived(searchTerm);
+  }
+
+  function buildLabReceivedList(entries) {
+    var container = document.getElementById('labReceivedList');
+    container.innerHTML = '';
+    entries.forEach(function(entry) {
+      var card = document.createElement('div');
+      card.style.border = "1px solid #ddd";
+      card.style.marginBottom = "10px";
+      card.style.padding = "10px";
+      
+      card.innerHTML = `
+        <h3>${entry.barcodeNumber}</h3>
+        <p><strong>Patient Name:</strong> ${entry.patientName}</p>
+        <p><strong>Patient Email:</strong> ${entry.patientEmail}</p>
+        <p><strong>Patient Phone Number:</strong> ${entry.patientPhone}</p>
+        <p><strong>Sender Name:</strong> ${entry.senderName}</p>
+        <p><strong>Collection Token Number:</strong> ${entry.tokenNumber}</p>
+        <p><strong>Courier Sent to Lab In:</strong> ${entry.courierLocation}</p>
+        <select id="sampleReceived-${entry.barcodeNumber}">
+          <option value="">Select Status</option>
+          <option value="Received">Received</option>
+          <option value="Not Received">Not Received</option>
+        </select>
+        <button onclick="submitSampleReceived('${entry.barcodeNumber}')">Submit</button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function submitSampleReceived(barcodeNumber) {
+    var sampleReceived = document.getElementById('sampleReceived-' + barcodeNumber).value;
+    google.script.run.updateSampleReceived({barcodeNumber: barcodeNumber, sampleReceived: sampleReceived});
+    alert(`Sample Received Status updated for ${barcodeNumber}`);
+  }
+
+  // Initial load
+  searchLabReceivedEntries();
+</script>

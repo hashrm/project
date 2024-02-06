@@ -1,0 +1,62 @@
+<!-- CreateTokens.html -->
+
+<div>
+  <h2>Create Tokens</h2>
+  <input type="text" id="searchField" placeholder="Search by barcode, name, etc.">
+  <button onclick="searchEntries()">Search</button>
+  <div id="tokensList"></div>
+</div>
+
+<script>
+  function searchEntries() {
+    var searchTerm = document.getElementById('searchField').value;
+    google.script.run.withSuccessHandler(buildTokensList).getEntriesForCreateTokens(searchTerm);
+  }
+
+  function buildTokensList(entries) {
+    var container = document.getElementById('tokensList');
+    container.innerHTML = '';
+    entries.forEach(function(entry) {
+      var card = document.createElement('div');
+      card.style.border = "1px solid #ddd";
+      card.style.marginBottom = "10px";
+      card.style.padding = "10px";
+      
+      var isEditable = !entry.tokenNumber && !entry.courierLocation; // Editable only if both token and courier are not set
+
+      card.innerHTML = `
+        <h3>${entry.barcodeNumber}</h3>
+        <p><strong>Patient Name:</strong> ${entry.patientName}</p>
+        <p><strong>Patient Email:</strong> ${entry.patientEmail}</p>
+        <p><strong>Patient Phone Number:</strong> ${entry.patientPhone}</p>
+        <p><strong>Sender Name:</strong> ${entry.senderName}</p>
+        <input type="text" placeholder="Collection Token Number" value="${entry.tokenNumber || ''}" ${isEditable ? '' : 'disabled'}>
+        <select id="courier-${entry.barcodeNumber}" ${isEditable ? '' : 'disabled'}>
+          <option value="">Select Courier Location</option>
+          <option value="KOCHI" ${entry.courierLocation === 'KOCHI' ? 'selected' : ''}>KOCHI</option>
+          <option value="MUMBAI" ${entry.courierLocation === 'MUMBAI' ? 'selected' : ''}>MUMBAI</option>
+        </select>
+        <button onclick="submitTokenAndCourier(this, '${entry.barcodeNumber}')">Submit</button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function submitTokenAndCourier(button, barcodeNumber) {
+    var tokenField = button.previousElementSibling.previousElementSibling;
+    var courierSelect = document.getElementById('courier-' + barcodeNumber);
+    var tokenNumber = tokenField.value;
+    var courierLocation = courierSelect.value;
+
+    if (tokenField.disabled || courierSelect.disabled) {
+      alert('Token number and courier location cannot be modified.');
+      return;
+    }
+
+    google.script.run.updateTokenAndCourierDetails({barcodeNumber: barcodeNumber, tokenNumber: tokenNumber, courierLocation: courierLocation});
+    alert(`Collection Token Number and Courier Location updated for ${barcodeNumber}`);
+  }
+
+  // Initial load
+  searchEntries();
+</script>

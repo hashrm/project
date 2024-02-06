@@ -1,0 +1,44 @@
+<!-- Login.html -->
+
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+  <div style="text-align: center;">
+    <h2>Login to NGS Sample Management System</h2>
+    <form id="loginForm">
+      <div style="margin-bottom: 10px;">
+        <label for="userID">UserID:</label><br>
+        <input type="text" id="userID" name="userID" required>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <label for="passKey">PassKey:</label><br>
+        <input type="password" id="passKey" name="passKey" required>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <p id="loginError" style="color: red;"></p>
+  </div>
+</div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var formData = new FormData(e.target);
+    google.script.run.withSuccessHandler(handleLoginResponse).withFailureHandler(handleLoginError).verifyLogin(Object.fromEntries(formData));
+  });
+
+  function handleLoginResponse(response) {
+    if(response) {
+      // Hide login and show other views
+      document.getElementById('login').style.display = 'none';
+      var views = document.getElementsByClassName('view-container');
+      for (var i = 0; i < views.length; i++) {
+        views[i].style.display = 'block';
+      }
+    } else {
+      document.getElementById('loginError').textContent = 'Invalid UserID or PassKey';
+    }
+  }
+
+  function handleLoginError(error) {
+    document.getElementById('loginError').textContent = 'An error occurred during login';
+  }
+</script>
